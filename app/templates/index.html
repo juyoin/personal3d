@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2D → 3D Reconstruction Studio</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="panel controls">
+        <h1>2D → 3D Reconstruction Studio</h1>
+        <p>Upload an image, segment the primary subject, estimate depth, and inspect the reconstructed model in 3D.</p>
+
+        <form id="uploadForm">
+          <label for="imageInput">Source image</label>
+          <input id="imageInput" name="image" type="file" accept="image/*" required />
+          <button type="submit">Reconstruct 3D Model</button>
+        </form>
+
+        <div id="status">Idle.</div>
+        <ul id="meta"></ul>
+
+        <div class="debug-grid">
+          <figure>
+            <figcaption>Segmentation Mask</figcaption>
+            <img id="maskPreview" alt="Segmentation mask preview" />
+          </figure>
+          <figure>
+            <figcaption>Depth Map</figcaption>
+            <img id="depthPreview" alt="Depth map preview" />
+          </figure>
+        </div>
+      </section>
+
+      <section class="panel viewer">
+        <canvas id="threeCanvas"></canvas>
+        <div class="tip">Mouse: left drag = rotate, right drag = pan, wheel = zoom.</div>
+      </section>
+    </main>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

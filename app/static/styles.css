@@ -1,0 +1,92 @@
+:root {
+  color-scheme: dark;
+  --bg: #111827;
+  --panel: #1f2937;
+  --accent: #38bdf8;
+  --text: #e5e7eb;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: linear-gradient(160deg, #0b1220, #111827 55%, #030712);
+  color: var(--text);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  min-height: 100vh;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.panel {
+  background: color-mix(in srgb, var(--panel) 94%, black);
+  border-radius: 16px;
+  border: 1px solid rgb(148 163 184 / 0.15);
+  padding: 1rem;
+}
+
+.controls form {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+button {
+  background: var(--accent);
+  border: 0;
+  color: #0f172a;
+  font-weight: 700;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+}
+
+#status { margin: 0.5rem 0 0.75rem; }
+#meta { padding-left: 1.1rem; }
+
+.debug-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.debug-grid img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid rgb(148 163 184 / 0.2);
+}
+
+.viewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+#threeCanvas {
+  width: 100%;
+  height: calc(100vh - 100px);
+  border-radius: 12px;
+  background: radial-gradient(circle at center, #0f172a, #020617);
+}
+
+.tip {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: rgb(2 6 23 / 0.7);
+  border: 1px solid rgb(148 163 184 / 0.25);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  #threeCanvas { height: 60vh; }
+}

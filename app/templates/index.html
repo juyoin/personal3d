@@ -6,7 +6,7 @@
     <title>2D → 3D Reconstruction Studio</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
-  <body>
+  <body data-image-query="{{ image_query }}">
     <main class="layout">
       <section class="panel controls">
         <h1>2D → 3D Reconstruction Studio</h1>
@@ -17,6 +17,7 @@
           <input id="imageInput" name="image" type="file" accept="image/*" required />
           <button type="submit">Reconstruct 3D Model</button>
         </form>
+        <p class="hint">Tip: You can also open <code>/?image=filename.png</code> for server-side processing from <code>app/samples/</code>.</p>
 
         <div id="status">Idle.</div>
         <ul id="meta"></ul>

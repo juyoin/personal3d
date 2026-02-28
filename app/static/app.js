@@ -6,6 +6,7 @@ const statusEl = document.getElementById('status');
 const metaEl = document.getElementById('meta');
 const maskPreview = document.getElementById('maskPreview');
 const depthPreview = document.getElementById('depthPreview');
+const initialImageQuery = document.body.dataset.imageQuery || '';
 
 const canvas = document.getElementById('threeCanvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -124,3 +125,39 @@ form.addEventListener('submit', async (event) => {
     setStatus(`Failed: ${error.message}`);
   }
 });
+
+async function runFromImageQuery(imageRef) {
+  setStatus(`Processing image query: ${imageRef}`);
+  metaEl.innerHTML = '';
+
+  try {
+    const response = await fetch(`/api/reconstruct?image=${encodeURIComponent(imageRef)}`);
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(`Server error ${response.status}: ${msg}`);
+    }
+
+    const result = await response.json();
+    const cloud = await fetch(result.pointCloudUrl).then((r) => r.json());
+    renderCloud(cloud);
+
+    maskPreview.src = result.maskUrl;
+    depthPreview.src = result.depthUrl;
+
+    metaEl.innerHTML = [
+      `<li>Source: ${result.sourceImage}</li>`,
+      `<li>Subject Label: ${result.label}</li>`,
+      `<li>Segmentation Confidence: ${Number(result.confidence).toFixed(3)}</li>`,
+      `<li>3D Points Generated: ${result.pointCount.toLocaleString()}</li>`,
+    ].join('');
+
+    setStatus('Complete. Drag to inspect the reconstructed object in 3D.');
+  } catch (error) {
+    console.error(error);
+    setStatus(`Failed: ${error.message}`);
+  }
+}
+
+if (initialImageQuery.trim()) {
+  runFromImageQuery(initialImageQuery.trim());
+}

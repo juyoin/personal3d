@@ -47,6 +47,14 @@ button {
 
 #status { margin: 0.5rem 0 0.75rem; }
 #meta { padding-left: 1.1rem; }
+.hint {
+  color: #93c5fd;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.hint code {
+  color: #e2e8f0;
+}
 
 .debug-grid {
   margin-top: 1rem;

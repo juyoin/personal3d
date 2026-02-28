@@ -8,11 +8,11 @@ from PIL import Image
 
 try:
     import torch
-    from transformers import AutoImageProcessor, DetrForSegmentation
+    from transformers import AutoImageProcessor, AutoModelForUniversalSegmentation
 except Exception:  # pragma: no cover - import fallback
     torch = None
     AutoImageProcessor = None
-    DetrForSegmentation = None
+    AutoModelForUniversalSegmentation = None
 
 
 @dataclass(slots=True)
@@ -31,10 +31,23 @@ class Segmenter:
         self.device = "cuda" if torch is not None and torch.cuda.is_available() else "cpu"
         self.processor = None
         self.model = None
+        self._load_attempted = False
 
-        if AutoImageProcessor is not None and DetrForSegmentation is not None:
-            self.processor = AutoImageProcessor.from_pretrained(model_name)
-            self.model = DetrForSegmentation.from_pretrained(model_name).to(self.device)
+    def _ensure_model_loaded(self) -> None:
+        if self._load_attempted:
+            return
+        self._load_attempted = True
+
+        if AutoImageProcessor is None or AutoModelForUniversalSegmentation is None:
+            return
+
+        try:
+            self.processor = AutoImageProcessor.from_pretrained(self.model_name)
+            self.model = AutoModelForUniversalSegmentation.from_pretrained(self.model_name).to(self.device)
+        except Exception:
+            # Fall back silently to deterministic heuristic segmentation.
+            self.processor = None
+            self.model = None
 
     def _largest_connected_component(self, image_rgb: np.ndarray) -> np.ndarray:
         """Heuristic fallback for foreground extraction by saturation + edges."""
@@ -65,6 +78,7 @@ class Segmenter:
 
     def segment_primary_subject(self, image_rgb: np.ndarray) -> SegmentationResult:
         """Extract the dominant foreground object mask and metadata."""
+        self._ensure_model_loaded()
         if self.model is None or self.processor is None or torch is None:
             mask = self._largest_connected_component(image_rgb)
             return SegmentationResult(mask=mask, label="foreground", score=0.5)

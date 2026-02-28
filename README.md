@@ -12,6 +12,7 @@ This project implements an end-to-end, modular Python pipeline that transforms a
    - Primary path: `facebook/detr-resnet-50-panoptic` identifies scene segments.
    - Chooses the dominant high-confidence segment as primary foreground subject.
    - Fallback path: HSV + morphology + largest connected component heuristic.
+   - Model loading is lazy and failure-tolerant (no startup crash if model download/runtime is unavailable).
 
 3. **Monocular depth estimation** (`app/pipeline/depth.py`)
    - Primary path: `Intel/dpt-large` infers dense depth from one image.
@@ -46,6 +47,19 @@ Open `http://localhost:8000`.
 - `POST /api/reconstruct`
   - Form field: `image`
   - Returns URLs for point cloud JSON, segmentation mask, depth map, and metadata.
+
+- `GET /api/reconstruct?image=<reference>`
+  - Processes an existing image by filename/path (searches `app/samples`, `app/uploads`, project root, or absolute path).
+
+## Quick query mode
+
+You can process a server-local image directly from the URL:
+
+```bash
+http://localhost:8000/?image=your_file.png
+```
+
+For convenience, place files in `app/samples/`.
 
 ## Transformation summary: 2D pixels → navigable 3D scene
 
